@@ -1,1 +1,6 @@
-opencv-python\npytesseract\nnumpy\npillow
+opencv-python
+pytesseract
+numpy
+pillow
+imutils
+matplotlib
