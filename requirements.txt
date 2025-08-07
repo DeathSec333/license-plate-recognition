@@ -1,6 +1,6 @@
-opencv-python
+pillow
 pytesseract
 numpy
-pillow
 imutils
 matplotlib
+easyocr
