@@ -1,6 +1,0 @@
-pillow
-pytesseract
-numpy
-imutils
-matplotlib
-easyocr

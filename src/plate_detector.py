@@ -4,8 +4,8 @@ import imutils
 
 class PlateDetector:
     def __init__(self):
-        self.min_area = 500
-        self.max_area = 10000
+        self.min_area = 200  # Reduced from 500
+        self.max_area = 15000  # Increased from 10000
         
     def detect_plates(self, image):
         """Multi-algorithm plate detection"""
@@ -28,26 +28,28 @@ class PlateDetector:
         
         # Bilateral filter + Canny edge detection
         filtered = cv2.bilateralFilter(gray, 11, 17, 17)
-        edges = cv2.Canny(filtered, 30, 200)
+        edges = cv2.Canny(filtered, 20, 150)  # Reduced thresholds
         
         contours = cv2.findContours(edges.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         contours = imutils.grab_contours(contours)
-        contours = sorted(contours, key=cv2.contourArea, reverse=True)[:10]
+        contours = sorted(contours, key=cv2.contourArea, reverse=True)[:15]  # Check more contours
         
         for contour in contours:
-            epsilon = 0.018 * cv2.arcLength(contour, True)
+            epsilon = 0.02 * cv2.arcLength(contour, True)  # Slightly more flexible
             approx = cv2.approxPolyDP(contour, epsilon, True)
             
-            if len(approx) == 4:
+            if len(approx) >= 4:  # Allow more than 4 corners
                 area = cv2.contourArea(contour)
                 if self.min_area < area < self.max_area:
                     x, y, w, h = cv2.boundingRect(approx)
-                    # Scale back to original image
-                    scale = image.shape[1] / 500
-                    x, y, w, h = int(x*scale), int(y*scale), int(w*scale), int(h*scale)
-                    plate_roi = image[y:y+h, x:x+w]
-                    if plate_roi.size > 0:
-                        plates.append(plate_roi)
+                    aspect_ratio = w / h
+                    if 1.5 <= aspect_ratio <= 6.0:  # License plate aspect ratio
+                        # Scale back to original image
+                        scale = image.shape[1] / 500
+                        x, y, w, h = int(x*scale), int(y*scale), int(w*scale), int(h*scale)
+                        plate_roi = image[y:y+h, x:x+w]
+                        if plate_roi.size > 0:
+                            plates.append(plate_roi)
         
         return plates
     
@@ -69,13 +71,13 @@ class PlateDetector:
         
         for contour in contours:
             area = cv2.contourArea(contour)
-            if area < 1000:
+            if area < 500:  # Reduced minimum area
                 continue
                 
             x, y, w, h = cv2.boundingRect(contour)
             aspect_ratio = w / h
             
-            if 2.0 <= aspect_ratio <= 5.0:
+            if 1.5 <= aspect_ratio <= 6.0:  # More flexible aspect ratio
                 plate_roi = image[y:y+h, x:x+w]
                 plates.append(plate_roi)
         
@@ -91,8 +93,8 @@ class PlateDetector:
         for plate in plates:
             is_duplicate = False
             for existing in filtered:
-                if abs(plate.shape[0] - existing.shape[0]) < 10 and \
-                   abs(plate.shape[1] - existing.shape[1]) < 10:
+                if abs(plate.shape[0] - existing.shape[0]) < 20 and \
+                   abs(plate.shape[1] - existing.shape[1]) < 20:
                     is_duplicate = True
                     break
             if not is_duplicate:
