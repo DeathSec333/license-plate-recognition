@@ -6,10 +6,17 @@ class CascadeDetector:
         # You can download haarcascade_licence_plate_rus_16stages.xml
         # or train your own cascade classifier
         self.cascade_path = 'haarcascade_russian_plate_number.xml'
+        self.plate_cascade = None
+        
         try:
             self.plate_cascade = cv2.CascadeClassifier(self.cascade_path)
-        except:
-            print("Cascade file not found, using contour method as fallback")
+            # Check if cascade loaded properly
+            if self.plate_cascade.empty():
+                print("Cascade file not found, using contour method as fallback")
+                self.plate_cascade = None
+        except Exception as e:
+            print(f"Error loading cascade: {e}")
+            print("Using contour method as fallback")
             self.plate_cascade = None
     
     def detect_plates(self, image):

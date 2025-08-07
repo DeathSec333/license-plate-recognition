@@ -17,29 +17,58 @@ class YOLODetector:
         templates = self.create_plate_templates()
         
         for template in templates:
-            # Template matching
+            # Template matching with higher threshold
             result = cv2.matchTemplate(gray, template, cv2.TM_CCOEFF_NORMED)
-            locations = np.where(result >= 0.6)
+            locations = np.where(result >= 0.8)  # Increased threshold from 0.6 to 0.8
             
-            for pt in zip(*locations[::-1]):
+            # Limit detections to avoid too many false positives
+            points = list(zip(*locations[::-1]))
+            if len(points) > 5:  # Limit to top 5 matches
+                points = points[:5]
+            
+            for pt in points:
                 x, y = pt
                 w, h = template.shape[::-1]
-                plate_roi = image[y:y+h, x:x+w]
-                plates.append(plate_roi)
+                
+                # Check if detection is reasonable size
+                if w > 50 and h > 15:  # Minimum reasonable plate size
+                    plate_roi = image[y:y+h, x:x+w]
+                    if plate_roi.size > 0:
+                        plates.append(plate_roi)
         
-        return plates
+        # Remove duplicates and return max 3 plates
+        return self.filter_duplicates(plates)[:3]
     
     def create_plate_templates(self):
         """Create basic rectangular templates"""
         templates = []
         
-        # Different plate sizes (width, height)
-        sizes = [(120, 30), (100, 25), (140, 35)]
+        # Different plate sizes (width, height) - more realistic sizes
+        sizes = [(200, 50), (160, 40), (240, 60)]
         
         for w, h in sizes:
             template = np.ones((h, w), dtype=np.uint8) * 255
             # Add border to simulate plate edge
-            cv2.rectangle(template, (2, 2), (w-3, h-3), 0, 2)
+            cv2.rectangle(template, (5, 5), (w-6, h-6), 0, 3)
             templates.append(template)
         
         return templates
+    
+    def filter_duplicates(self, plates):
+        """Remove overlapping detections"""
+        if not plates:
+            return plates
+        
+        filtered = []
+        for plate in plates:
+            is_duplicate = False
+            for existing in filtered:
+                # Check if plates are similar in size (likely duplicates)
+                if abs(plate.shape[0] - existing.shape[0]) < 20 and \
+                   abs(plate.shape[1] - existing.shape[1]) < 20:
+                    is_duplicate = True
+                    break
+            if not is_duplicate:
+                filtered.append(plate)
+        
+        return filtered
