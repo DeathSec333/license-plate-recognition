@@ -1,9 +1,49 @@
+# Python
 __pycache__/
-*.pyc
-*.pyo
-.env
-venv/
-.vscode/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Database
+*.db
+*.sqlite3
+
+# i2p
+.i2pd/
+tunnels.d/
+
+# Images
 *.jpg
 *.png
-!sample_images/
+*.jpeg
+test_image.*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
