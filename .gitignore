@@ -47,3 +47,21 @@ Thumbs.db
 # Logs
 *.log
 logs/
+# Logs
+*.log
+app.log
+
+# Environment-specific configs
+config.*.yml
+
+# Virtual environment
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Database files (if containing sensitive data)
+# amber_alerts.db
+
+# Model files (if too large)
+models/*.pt

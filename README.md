@@ -254,3 +254,36 @@ This software is intended for legitimate law enforcement, cybersecurity research
 **⭐ Star this repository if you find it useful!**
 
 **🔒 Built with privacy and security in mind**
+
+## Configuration
+
+This project uses a YAML-based configuration system. All settings are stored in `config.yml` in the project root.
+
+### Configuration Options
+
+- **application**: General application settings
+  - `name`: Application name
+  - `version`: Application version
+
+- **detection**: License plate detection settings
+  - `confidence_threshold`: Minimum confidence level for detection (0.0-1.0)
+  - `max_detections`: Maximum number of plates to detect in an image
+  - `model_path`: Path to the detection model
+
+- **image**: Image processing settings
+  - `width`: Default image width for processing
+  - `height`: Default image height for processing
+  - `formats`: Supported image formats
+
+- **database**: Database settings
+  - `path`: Path to the SQLite database file
+  - `backup_interval`: Interval between database backups (in seconds)
+
+- **logging**: Logging settings
+  - `level`: Log level (DEBUG, INFO, WARNING, ERROR)
+  - `file`: Path to log file
+  - `max_size`: Maximum log file size in bytes
+
+### Changing Configuration
+
+Edit the `config.yml` file to change any settings. The application will use these settings automatically.

@@ -1,0 +1,23 @@
+# config.yml
+application:
+  name: License Plate Recognition
+  version: 1.0.0
+
+detection:
+  confidence_threshold: 0.7
+  max_detections: 10
+  model_path: "models/yolo_plate_detector.pt"
+
+image:
+  width: 640
+  height: 480
+  formats: ["jpg", "png", "jpeg"]
+
+database:
+  path: "amber_alerts.db"
+  backup_interval: 86400  # 24 hours in seconds
+
+logging:
+  level: "INFO"
+  file: "app.log"
+  max_size: 10485760  # 10MB
